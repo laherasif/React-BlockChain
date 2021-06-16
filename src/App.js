@@ -1,68 +1,82 @@
 // import logo from './logo.svg';
 // import './App.css';
-import Web3 from 'web3'
 import React,{ useEffect , useState } from 'react'
+import UnlockAccount from './api/web3'
 function App() {
   const [account, setaccount] = useState("")
   const [Balance, setBalance] = useState("")
   const [Trans, setTrans] = useState(0)
+  const [Work, setWork] = useState(0)
 useEffect(() => {
  
    const loadBlockchainData = async ()  =>  {
+    let { web3 , accounts } = await UnlockAccount() 
+    console.log("aaccc", accounts);
+    
+    // const Balnce = await web3.eth.getBalance(account , (error , result) => {
+    // if(error){
+    //   console.log("error", error);
+    // }
+    // else {
+    //   console.log("result " , result );
+    // }
+    // })
 
-    const { ethereum } = window;
-    if (!ethereum) {
-      throw new Error("Web3 not found");
-    }
-    const web3 = new Web3(ethereum);
-    await ethereum.enable();
-  
-    const accounts = await web3.eth.getAccounts();
-    const Balnce = await web3.eth.getBalance(account , (error , result) => {
-    if(error){
-      console.log("error", error);
-    }
-    else {
-      console.log("result " , result );
-    }
-    })
-
-    const NumCountReq = await web3.eth.getTransactionCount(account)
+    // const NumCountReq = await web3.eth.getTransactionCount(account)
     const netId = await web3.eth.net.getId();
 
-    for (let i = 1; i <= 10; i++) {
-      const txIndex = NumCountReq - i;
-      if (txIndex < 0) {
-        break;
-      }
-    const tx = await web3.eth.getTransaction(txIndex);
-    const isConfirmed = await web3.eth.isConfirmed(txIndex, account);
-    console.log("txt first" , tx);
-    console.log("txt" , isConfirmed);
+    // for (let i = 1; i <= 10; i++) {
+    //   const txIndex = NumCountReq - i;
+    //   if (txIndex < 0) {
+    //     break;
+    //   }
+    // const tx = await web3.eth.getTransaction(txIndex);
+    // const isConfirmed = await web3.eth.isConfirmed(txIndex, account);
+    // console.log("txt first" , tx);
+    // console.log("txt" , isConfirmed);
     
-    }
-        console.log("data",accounts);
-        console.log("data",Balnce);
-        console.log("data",NumCountReq);
+    // }
+        // console.log("data",NumCountReq);
         console.log("data",netId);
 
 
         
-    setaccount( accounts[0] )
-    setBalance( Balnce )
-    setTrans(NumCountReq)
+    // setBalance( Balnce )
+    setaccount( accounts )
+    // setTrans(NumCountReq)
+    setWork(netId)
   }
   loadBlockchainData()
   
 }, [])
+
+
+function getNetwork(netId) {
+  switch (netId) {
+    case 1:
+      return "Mainnet";
+    case 2:
+      return "Morden test network";
+    case 3:
+      return "Ropsten network";
+    case 4:
+      return "Rinkeby test network";
+    case 42:
+      return "Kovan test network";
+    default:
+      return "Unkown network";
+  }
+}
   return (
     <div className="App">
+      NetWork : { getNetwork(Work)}
+      <br/>
       Account : { account}
       <br/>
-      Balance : { Balance }
+      {/* Balance : { Balance } */}
        
       <br/>
-      Transection : { Trans }
+      {/* Transection : { Trans } */}
     </div>
   );
 }
